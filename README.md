@@ -8,4 +8,4 @@ The `requirements.txt` file should list all Python libraries that this simulator
 ```pip install -r requirements.txt```
 
 ## License
-See the [LICENSE](main/LICENSE) file
+See the [LICENSE](LICENSE) file

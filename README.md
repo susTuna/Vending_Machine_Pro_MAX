@@ -6,9 +6,7 @@ This project is made in order to fulfill one of our Introduction to Computing co
 The `requirements.txt` file should list all Python libraries that this simulator depends on, and they will be installed using:
 
 ```
-function test() {
-  console.log("This code will have a copy button to the right of it");
-}
+pip install -r requirements.txt
 ```
 
 ## License

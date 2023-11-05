@@ -94,6 +94,19 @@ reso = {
   "gula": 24
 }
 
+#saldo awal QRIS Rp300.000,00
+saldo = {"uang" : 300000}
+from inputimeout import inputimeout
+
+#mendefinisikan fungsi untuk refill resource
+def isiulang():
+  #kamus lokal
+  #isi : int
+  #i : str
+  #reso : dictionary
+  for i in reso:
+    isi=int(input(f"Masukkan jumlah {i} yang ingin diisi ulang: "))
+    reso[i]+=isi
 # mendefinisikan laporan dari sisa bahan atau menu 13 pada display menu
 def report():    
   print(f"Available Resources:\n"
@@ -142,7 +155,8 @@ def display_menu():
 ------------------------------------------------    
 Pilihan lainnya:
 13. Cek bahan yang tersedia
-14. Exit""")
+14. Staff Only
+15. Exit""")
 
 #fungsi update menu
 def update_menu(pesanan_string,menu_list):
@@ -229,22 +243,31 @@ def display_level(pesanan_angka,pesanan_string):
 #fungsi display pembayaran
 def display_pembayaran(pesanan_string): #fungsi untuk pembayaran
   #kamus lokal
-  #menu : dictionary
-  #bayar : str
+  #menu,saldo : dictionary
+  #confirm : str
   print(f"""Harga yang harus anda bayar adalah : {menu[pesanan_string]["harga"]}
-Apakah sudah bayar:
--Iya
--Cancel order""")
+Silahkan scan QRIS dalam 30 detik""")
+  try:
 
-  while True:
-    bayar = input("Pilihan: ")
-    if bayar.lower() == "iya":
-      print()
-      return True
-    elif bayar.lower() == "cancel order":
-      return False
-    else: # bayar.lower() == "tidak atau apapun":
-      print("Tolong bayar sesuai yang diminta")
+    #Input dengan batas waktu 30 detik
+    confirm = inputimeout(prompt='Konfirmasi Bayar (Y/N): ', timeout=30)
+
+  # Catch the timeout error
+  except Exception:
+
+    #Timeout
+    confirm = 'Waktu Habis'
+  if saldo["uang"]<menu[pesanan_string]["harga"]:
+    confirm = 'Saldo tidak cukup'
+  else: #jika saldo cukup
+    saldo["uang"]-=menu[pesanan_string]["harga"]
+  if confirm=='Y':
+    return True
+  elif confirm=='N':
+    return False
+  else: #confirm!+'Y' or confirm!='N'
+    print(confirm)
+    return confirm
 
 #fungsi pembuatan kopi
 def proses_pembuatan_kopi(pesanan_string): #fungsi untuk proses pengurangan bahan dari dictionary karena minuman dibuat
@@ -261,9 +284,17 @@ while is_on:
   menyu_integer = int(input("Pilih nomor menu: "))    # meminta input pengguna untuk memilih menu yang diinginkan
   print()    # membuat pause
   match menyu_integer:      # menyocokkan menyu_integer dengan angka spesifik
-    case 14: #keluar dari program
+    case 15: #keluar dari program
       print("Terima Kasih telah menggunakan Vending Machine")
       is_on = False
+    case 14: #mode staff untuk isi ulang
+      print('Staff Mode')
+      pw=int(input('Masukkan sandi: '))
+      if pw!=69420:
+        print('Sandi salah')
+        continue
+      else: #pw==69420
+        isiulang()
     case 13: #mengecek bahan yang tersedia
       report()
       pause = input()
